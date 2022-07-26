@@ -1,0 +1,19 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "author": "Hue",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1",
+    "prisma": "^4.1.0"
+  },
+  "prettier": {
+    "singleQuote": true
+  }
+}
