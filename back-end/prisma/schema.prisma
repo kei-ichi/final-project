@@ -6,6 +6,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "postgresql://postgres:admin@localhost:5432/member?schema=public"
+  provider = "mysql"
+  url      = "mysql://root:admin@localhost:3306/user"
+}
+
+model User {
+  id   String @id @default(uuid())
+  name String
+  strength_1 String
+  strength_2 String
+  strength_3 String
+  strength_4 String
+  strength_5 String
 }
