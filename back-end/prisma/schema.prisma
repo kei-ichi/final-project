@@ -18,4 +18,5 @@ model User {
   strength_3 String
   strength_4 String
   strength_5 String
+  imgUrl String
 }
