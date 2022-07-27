@@ -48,10 +48,12 @@ import { ref, onMounted } from 'vue';
 
 let users = ref([]);
 
+const serverAddress = 'http://127.0.0.1:5000';
+
 async function generateUsersData() {
   const result = await axios({
     method: 'post',
-    url: 'http://localhost:5000',
+    url: serverAddress,
   });
   console.log(result);
 
@@ -61,7 +63,7 @@ async function generateUsersData() {
 async function deleteUsersData() {
   const result = await axios({
     method: 'delete',
-    url: 'http://localhost:5000',
+    url: serverAddress,
   });
 
   // Clear users value
@@ -74,7 +76,7 @@ async function deleteUsersData() {
 onMounted(async () => {
   const result = await axios({
     method: 'get',
-    url: 'http://localhost:5000',
+    url: serverAddress,
   });
 
   console.log(result);
