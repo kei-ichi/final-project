@@ -22,9 +22,19 @@ ul {
   justify-content: center;
 }
 
+.logo {
+  margin-top: 5rem;
+  width: 20rem;
+}
+
+.logo__img {
+  width: 100%;
+  height: auto;
+}
+
 .region {
-  margin: 5rem 0;
   color: red;
+  margin: 2rem 0;
 
   &--osaka {
     color: blue;

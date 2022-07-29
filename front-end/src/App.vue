@@ -1,5 +1,12 @@
 <template>
   <div class="container">
+    <div class="logo">
+      <img
+        class="logo__img"
+        src="./assets/img/logo.png"
+        alt="Asia Quest Logo"
+      />
+    </div>
     <h1 class="region">東京リージョン： 22卒メンバー</h1>
 
     <div class="user">
