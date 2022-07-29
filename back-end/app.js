@@ -44,16 +44,6 @@ const members = [
   },
 
   {
-    name: '佐藤 龍也',
-    strength_1: '着想',
-    strength_2: '学習欲',
-    strength_3: '個別化',
-    strength_4: '活発性',
-    strength_5: '収集心',
-    imgUrl:
-      'https://aq-22-final-project-img-bucket.s3.ap-northeast-1.amazonaws.com/sato.jpg',
-  },
-  {
     name: 'ブーブァンフェ',
     strength_1: '学習欲',
     strength_2: '分析思考',
@@ -62,6 +52,17 @@ const members = [
     strength_5: '責任感',
     imgUrl:
       'https://aq-22-final-project-img-bucket.s3.ap-northeast-1.amazonaws.com/hue.jpg',
+  },
+
+  {
+    name: '佐藤 龍也',
+    strength_1: '着想',
+    strength_2: '学習欲',
+    strength_3: '個別化',
+    strength_4: '活発性',
+    strength_5: '収集心',
+    imgUrl:
+      'https://aq-22-final-project-img-bucket.s3.ap-northeast-1.amazonaws.com/sato.jpg',
   },
 ];
 
@@ -78,7 +79,19 @@ app.use(express.json());
 app.get('/', async (req, res) => {
   const result = await prisma.user.findMany();
 
-  console.log(result);
+  if (result.length === 0) {
+    console.log('                             ');
+    console.log('-----------------------------');
+    console.log('Database is empty');
+    console.log('-----------------------------');
+    console.log('                             ');
+  } else {
+    console.log('                             ');
+    console.log('-----------------------------');
+    console.log(result);
+    console.log('-----------------------------');
+    console.log('                             ');
+  }
 
   res.send(result);
 });
@@ -89,16 +102,26 @@ app.post('/', async (req, res) => {
       data: member,
     });
 
+    console.log('                             ');
+    console.log('-----------------------------');
     console.log(data);
+    console.log('-----------------------------');
+    console.log('                             ');
   }
 
-  res.send(members);
+  const inputtedData = await prisma.user.findMany();
+
+  res.send(inputtedData);
 });
 
 app.delete('/', async (req, res) => {
   const result = await prisma.user.deleteMany({});
 
-  console.log(result);
+  console.log('                             ');
+  console.log('-----------------------------');
+  console.log(`Deleted ${result.count} items from database`);
+  console.log('-----------------------------');
+  console.log('                             ');
 
   res.send(result);
 });

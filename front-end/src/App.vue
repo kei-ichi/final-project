@@ -85,6 +85,8 @@ onMounted(async () => {
     users.value = [...result.data];
 
     //console.log(users.value);
+  } else {
+    console.log('Database is empty');
   }
 });
 </script>
