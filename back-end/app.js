@@ -1,6 +1,20 @@
 // Prisma Client
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+
+// Master endpoint
+const devEndpoint = 'mysql://root:admin@localhost:3306/user';
+
+const tokyoWriteEndpoint =
+  'mysql://admin:admin0729@ojt22-aurora-1a.cluster-co7scheoqs6o.ap-northeast-1.rds.amazonaws.com:3306/user';
+
+const osakaWriteEndpoint =
+  'mysql://admin:admin0729@ojt22-aurora-3a.cluster-cpz0zjyan50t.ap-northeast-3.rds.amazonaws.com:3306/user';
+
+// Replica endpoint
+const tokyoReadEndpoint =
+  'ojt22-aurora-1a.cluster-ro-co7scheoqs6o.ap-northeast-1.rds.amazonaws.com';
+const osakaReadEndpoint =
+  'ojt22-aurora-3a.cluster-ro-cpz0zjyan50t.ap-northeast-3.rds.amazonaws.com';
 
 // Express.js
 const express = require('express');
@@ -77,53 +91,203 @@ app.use(
 app.use(express.json());
 
 app.get('/', async (req, res) => {
-  const result = await prisma.user.findMany();
+  try {
+    // Get data from Tokyo read endpoint
 
-  if (result.length === 0) {
-    console.log('                             ');
-    console.log('-----------------------------');
-    console.log('Database is empty');
-    console.log('-----------------------------');
-    console.log('                             ');
-  } else {
-    console.log('                             ');
-    console.log('-----------------------------');
-    console.log(result);
-    console.log('-----------------------------');
-    console.log('                             ');
+    // Innit Prisma client with Tokyo read endpoint
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: tokyoReadEndpoint,
+        },
+      },
+    });
+
+    // Get data from database
+    const result = await prisma.user.findMany();
+
+    if (result.length === 0) {
+      console.log('                             ');
+      console.log('-----------------------------');
+      console.log('Database is empty');
+      console.log('-----------------------------');
+      console.log('                             ');
+    } else {
+      console.log('                             ');
+      console.log('-----------------------------');
+      console.log(result);
+      console.log('-----------------------------');
+      console.log('                             ');
+    }
+
+    // Send back data to Client
+    res.send(result);
+  } catch (error) {
+    // Show error
+    console.log('                                                ');
+    console.log('------------------------------------------------');
+    console.log('Can not get data from Tokyo Cluster - Read Endpoint');
+    console.log('Trying get data from Osaka Cluster - Read Endpoint ');
+    console.log('                                                ');
+    console.log('------------------------------------------------');
+
+    // Innit Prisma client with Osaka read endpoint
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: osakaReadEndpoint,
+        },
+      },
+    });
+
+    // Get data from database
+    const result = await prisma.user.findMany();
+
+    if (result.length === 0) {
+      console.log('                             ');
+      console.log('-----------------------------');
+      console.log('Database is empty');
+      console.log('-----------------------------');
+      console.log('                             ');
+    } else {
+      console.log('                             ');
+      console.log('-----------------------------');
+      console.log(result);
+      console.log('-----------------------------');
+      console.log('                             ');
+    }
+
+    // Send back data to Client
+    res.send(result);
   }
-
-  res.send(result);
 });
 
 app.post('/', async (req, res) => {
-  for (const member of members) {
-    const data = await prisma.user.create({
-      data: member,
+  try {
+    // Write data to database by using Tokyo CLuster - Write endpoint
+    // Innit Prisma client with Tokyo CLuster - Write endpoint
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: tokyoWriteEndpoint,
+        },
+      },
     });
 
-    console.log('                             ');
-    console.log('-----------------------------');
-    console.log(data);
-    console.log('-----------------------------');
-    console.log('                             ');
+    // Write data to database
+    for (const member of members) {
+      const data = await prisma.user.create({
+        data: member,
+      });
+
+      console.log('                             ');
+      console.log('-----------------------------');
+      console.log(data);
+      console.log('-----------------------------');
+      console.log('                             ');
+    }
+
+    // Get latest data from database
+    const inputtedData = await prisma.user.findMany();
+
+    // Send back data to Client
+    res.send(inputtedData);
+  } catch (error) {
+    // Show error
+    console.log('                                                ');
+    console.log('------------------------------------------------');
+    console.log('Can not write data to Tokyo Primary Cluster');
+    console.log('Trying to write data to Osaka Secondary Cluster');
+    console.log('                                                ');
+    console.log('------------------------------------------------');
+
+    // Write data to database by using Osaka CLuster - Write endpoint
+    // Innit Prisma client with Osaka CLuster - Write endpoint
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: osakaWriteEndpoint,
+        },
+      },
+    });
+
+    // Write data to database
+    for (const member of members) {
+      const data = await prisma.user.create({
+        data: member,
+      });
+
+      console.log('                             ');
+      console.log('-----------------------------');
+      console.log(data);
+      console.log('-----------------------------');
+      console.log('                             ');
+    }
+
+    // Get latest data from database
+    const inputtedData = await prisma.user.findMany();
+
+    // Send back data to Client
+    res.send(inputtedData);
   }
-
-  const inputtedData = await prisma.user.findMany();
-
-  res.send(inputtedData);
 });
 
 app.delete('/', async (req, res) => {
-  const result = await prisma.user.deleteMany({});
+  try {
+    // Delete data by using Tokyo Cluster - Write endpoint
+    // Innit Prisma client with Tokyo Cluster - Write endpoint
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: tokyoWriteEndpoint,
+        },
+      },
+    });
 
-  console.log('                             ');
-  console.log('-----------------------------');
-  console.log(`Deleted ${result.count} items from database`);
-  console.log('-----------------------------');
-  console.log('                             ');
+    // Delete all data from database
+    const result = await prisma.user.deleteMany({});
 
-  res.send(result);
+    console.log('                             ');
+    console.log('-----------------------------');
+    console.log(`Deleted ${result.count} items from database`);
+    console.log('-----------------------------');
+    console.log('                             ');
+
+    // Send back result to Client
+    res.send(result);
+  } catch (error) {
+    // Show error
+    console.log('                                                ');
+    console.log('------------------------------------------------');
+    console.log('Can not delete data by using Tokyo Cluster - Write Endpoint');
+    console.log(
+      'Trying to delete data by using Osaka Cluster - Write Endpoint'
+    );
+    console.log('                                                ');
+    console.log('------------------------------------------------');
+
+    // Delete data by using Osaka Cluster - Write endpoint
+    // Innit Prisma client with Osaka Cluster - Write endpoint
+    const prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: osakaWriteEndpoint,
+        },
+      },
+    });
+
+    // Delete all data from database
+    const result = await prisma.user.deleteMany({});
+
+    console.log('                             ');
+    console.log('-----------------------------');
+    console.log(`Deleted ${result.count} items from database`);
+    console.log('-----------------------------');
+    console.log('                             ');
+
+    // Send back result to Client
+    res.send(result);
+  }
 });
 
 app.listen(PORT, () => {
