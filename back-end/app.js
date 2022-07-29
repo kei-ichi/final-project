@@ -12,9 +12,9 @@ const osakaWriteEndpoint =
 
 // Replica endpoint
 const tokyoReadEndpoint =
-  'ojt22-aurora-1a.cluster-ro-co7scheoqs6o.ap-northeast-1.rds.amazonaws.com';
+  'mysql://admin:admin0729@ojt22-aurora-1a.cluster-ro-co7scheoqs6o.ap-northeast-1.rds.amazonaws.com';
 const osakaReadEndpoint =
-  'ojt22-aurora-3a.cluster-ro-cpz0zjyan50t.ap-northeast-3.rds.amazonaws.com';
+  'mysql://admin:admin0729@ojt22-aurora-3a.cluster-ro-cpz0zjyan50t.ap-northeast-3.rds.amazonaws.com';
 
 // Express.js
 const express = require('express');
